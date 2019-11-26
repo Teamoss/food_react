@@ -6,18 +6,15 @@ class Index extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-
-        };
     }
 
-    render()
-    {
+    render() {
         return (
-           <div>
-               <NavMenu/>
-           </div>
+            <div>
+                <NavMenu/>
+            </div>
         )
     }
 }
+
 export default Index

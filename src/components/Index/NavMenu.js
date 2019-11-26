@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
 import {Button, Form, Menu} from 'element-react';
-import 'element-theme-default';
+import {Route,Link,Switch} from 'react-router-dom'
+import BusinessEdit from './BusinessEdit'
+import Business from './Business'
 
 class NavMenu extends Component {
 
@@ -27,8 +29,14 @@ class NavMenu extends Component {
                         <Menu.Item index="2-3">选项3</Menu.Item>
                     </Menu.SubMenu>
                     <Menu.Item index="3">订单管理</Menu.Item>
-                    <Menu.Item index="3">商家信息</Menu.Item>
+                    <Link to='/Index/business'>
+                        <Menu.Item index="4">商家信息</Menu.Item>
+                    </Link>
                 </Menu>
+                <Switch>
+                    <Route exact path='/Index/business' component={Business}/>
+                    <Route exact path='/Index/business/businessEdit' component={BusinessEdit}/>
+                </Switch>
             </div>
         )
     }

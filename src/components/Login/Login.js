@@ -41,9 +41,9 @@ class Login extends Component {
                         message: res.data.message,
                         type: 'success'
                     });
-                    this.props.history.push('/Index')
+                    this.props.history.push({pathname: '/Index', state: {userId: res.data.userInfo._id}})
                 }
-                if(res.data.code === 2001) {
+                if (res.data.code === 2001) {
                     Message({
                         showClose: true,
                         message: res.data.message,
@@ -73,7 +73,7 @@ class Login extends Component {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginTop: '230px',
-                    marginRight: '50px'
+                    marginRight: 50
                 }}>
                     <Form ref="form" model={this.state.form} rules={this.state.rules} labelWidth="80"
                           className="demo-ruleForm">

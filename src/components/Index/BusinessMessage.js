@@ -18,6 +18,9 @@ class BusinessMessage extends Component {
         };
     }
 
+   componentDidMount() {
+
+   }
 
     editMessage() {
         this.props.history.push('/Index/business/businessEdit')
@@ -31,7 +34,7 @@ class BusinessMessage extends Component {
                     <Form ref="form" model={this.state.form} rules={this.state.rules} labelWidth="100"
                           className="demo-dynamic">
                         <Form.Item prop="logo" label="商家logo :">
-                            <img src="https://avatars1.githubusercontent.com/u/51401016?s=40&v=4" alt='商家Logo'/>
+                            <img src="https://avatars2.githubusercontent.com/u/51401016?s=460&v=4" width={50} height={50} alt='商家Logo'/>
                         </Form.Item>
                         <Form.Item prop="name" label="商家名称 :">
                             <Input value={this.state.form.name}/>

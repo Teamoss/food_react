@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {Button, Form, Input, Message} from 'element-react';
 import 'element-theme-default';
-import axios from 'axios'
-import Connect from '../../service/address'
+// import Connect from '../../service/address'
+import {connect} from 'react-redux';
+import * as loginAction from "../../action/loginAction";
+
 
 class Login extends Component {
 
@@ -15,6 +17,7 @@ class Login extends Component {
             },
         };
     }
+
 
     onUserChange = (key, value) => {
         this.setState({
@@ -29,31 +32,37 @@ class Login extends Component {
 
     //登录
     login = () => {
+        const {getLogin} = this.props
         const {form} = this.state
-        axios.post(Connect.login, {
+        getLogin({
             username: form.username,
             password: form.password
         })
-            .then(res => {
-                if (res.data.code === 2000) {
-                    Message({
-                        showClose: true,
-                        message: res.data.message,
-                        type: 'success'
-                    });
-                    this.props.history.push({pathname: '/Index', state: {userId: res.data.userInfo._id}})
-                }
-                if (res.data.code === 2001) {
-                    Message({
-                        showClose: true,
-                        message: res.data.message,
-                        type: 'error'
-                    });
-                }
-            })
-            .catch(err => {
-                console.log(err)
-            });
+        // const {form} = this.state
+        // axios.post(Connect.login, {
+        //     username: form.username,
+        //     password: form.password
+        // })
+        //     .then(res => {
+        //         if (res.data.code === 2000) {
+        //             Message({
+        //                 showClose: true,
+        //                 message: res.data.message,
+        //                 type: 'success'
+        //             });
+        //             this.props.history.push({pathname: '/Index', state: {userId: res.data.userInfo._id}})
+        //         }
+        //         if (res.data.code === 2001) {
+        //             Message({
+        //                 showClose: true,
+        //                 message: res.data.message,
+        //                 type: 'error'
+        //             });
+        //         }
+        //     })
+        //     .catch(err => {
+        //         console.log(err)
+        //     });
 
     }
 
@@ -96,4 +105,13 @@ class Login extends Component {
     }
 }
 
-export default Login
+export default connect(
+    (state) => ({
+        loginData: state.loginReducer.loginData,
+        loginError: state.loginReducer.loginError,
+    }),
+    (dispatch) => ({
+        getLogin: (params) => dispatch(loginAction.getLogin(params)),
+    })
+)(Login)
+

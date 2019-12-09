@@ -4,8 +4,7 @@ import 'element-theme-default';
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
 import Index from './components/Index/Index'
-
-import {HashRouter, Route, Link, Redirect} from 'react-router-dom'
+import {HashRouter, Route} from 'react-router-dom'
 
 class App extends Component {
 

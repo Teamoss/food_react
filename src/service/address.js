@@ -1,5 +1,5 @@
-//跟地址
-let host = 'http://localhost:3000'
+//主机地址
+let host = 'http://localhost:5000'
 
 let Connect = {
     login : host + '/api/login' ,//登录

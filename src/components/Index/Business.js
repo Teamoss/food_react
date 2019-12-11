@@ -3,13 +3,11 @@ import 'element-theme-default';
 import {Tabs} from 'element-react';
 import BusinessMessage from "./BusinessMessage";
 import {Route,Switch} from 'react-router-dom'
-import store from '../../store/store'
 
 class Business extends Component {
 
     constructor(props) {
         super(props);
-        console.log(store.getState())
     }
 
     clickTab = (tab) => {

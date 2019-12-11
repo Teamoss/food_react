@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Button, Form, Input, Message} from 'element-react';
 import 'element-theme-default';
-// import Connect from '../../service/address'
 import {connect} from 'react-redux';
 import * as loginAction from "../../action/loginAction";
 
@@ -18,6 +17,28 @@ class Login extends Component {
         };
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps && nextProps.loginData) {
+            let data = nextProps.loginData
+            if (data.code === 2000) {
+                Message({
+                    showClose: true,
+                    message: data.message,
+                    type: 'success'
+                });
+                let userInfo = JSON.stringify(data.userInfo)
+                sessionStorage.setItem('userInfo',userInfo)
+                this.props.history.push('/Index')
+            }
+            if (data.code === 2001) {
+                Message({
+                    showClose: true,
+                    message: data.message,
+                    type: 'error'
+                });
+            }
+        }
+    }
 
     onUserChange = (key, value) => {
         this.setState({

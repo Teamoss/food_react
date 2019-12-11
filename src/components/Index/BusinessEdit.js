@@ -2,6 +2,12 @@ import React, {Component} from 'react';
 import 'element-theme-default';
 import {Button, Form, Upload, Input, Message, Layout, Tabs} from 'element-react';
 import 'element-theme-default';
+import DistPicker from 'react-distpicker';
+import {connect} from "react-redux";
+import * as businessMessageAction from "../../action/businessMessageAction";
+import Connect from "../../service/address";
+import axios from "axios";
+
 
 class BusinessEdit extends Component {
 
@@ -12,11 +18,54 @@ class BusinessEdit extends Component {
             form: {
                 name: '',
                 message: '',
-                imageUrl: '',
                 address: '',
+                detailAddress: '',
             },
-            file:[],
+            city: null,
+            imageUrl:null
         };
+    }
+
+    componentDidMount() {
+        this.loadMessage()
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const {form, file,imageUrl} = this.state
+        if (nextProps.businessMessageData) {
+            let data = nextProps.businessMessageData
+            if (data.code === 2000) {
+                let userInfo = data.userInfo
+                form.logo = userInfo.logo
+                form.name = userInfo.business
+                form.message = userInfo.content
+                this.setState({
+                    imageUrl : userInfo.logo
+                })
+            }
+        }
+    }
+
+    loadMessage = () => {
+        const {getBusinessMessage} = this.props
+        let data = JSON.parse(sessionStorage.getItem('userInfo'));
+        let userID = data._id
+        getBusinessMessage({
+            userID
+        })
+    }
+
+    handleAvatarScucess(res, file) {
+        console.log(res,file)
+        this.setState({ imageUrl: URL.createObjectURL(file.raw) });
+    }
+
+    beforeAvatarUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            Message('上传头像图片大小不能超过 2MB!');
+        }
+        return isLt2M;
     }
 
     onSubmit(e) {
@@ -28,36 +77,48 @@ class BusinessEdit extends Component {
         this.forceUpdate();
     }
 
-
-    handlePreview(file) {
-        console.log(file)
-        console.log('preview');
-    }
-
-    handleRemove(file, fileList) {
-        console.log(file)
-        console.log('remove');
-    }
-
     clickTab = (tab) => {
         let index = tab.props.name
-        if(index == 1){
+        if (index == 1) {
             this.props.history.push('/Index/business')
         }
-        if(index == 2){
+        if (index == 2) {
             this.props.history.push('/Index/business/businessEdit')
         }
     }
 
 
-    render() {
+    //地区选择
+    _onSelect = (data) => {
+        if (data.district) {
+            let address = data.province + data.district + data.city
+            this.setState({
+                city: address
+            })
+        }
+    }
 
-        const { file } = this.state;
-        // const fileList = [
-        //     // {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg'}
-        // ];
+    //确定编辑
+    editMessage = () => {
+        const {imageUrl} = this.state
+        console.log(imageUrl)
+        // axios.post(Connect.editBusinessMessage, {
+        //     imageUrl
+        // }).then(res => {
+        //     console.log(res)
+        // })
+        //     .catch(err => {
+        //         console.log(err)
+        //     });
+        // const {city, form, imageUrl} = this.state
+        // let addressMess = city ? city + form.detailAddress : form.detailAddress
+        // console.log(imageUrl)
+    }
+
+    render() {
+        const {imageUrl} = this.state;
         return (
-            <div style={{height:'100%',width:'100%'}}>
+            <div style={{height: '100%', width: '100%'}}>
                 <Layout.Row>
                     <Layout.Col span="24">
                         <Tabs activeName="2" onTabClick={(tab) => this.clickTab(tab)}>
@@ -77,28 +138,28 @@ class BusinessEdit extends Component {
                                 <Input type="textarea" value={this.state.form.message}
                                        onChange={this.onChange.bind(this, 'message')}/>
                             </Form.Item>
-                            <Form.Item  label="商家地址 :">
-                                <Input value={this.state.form.address}
-                                       onChange={this.onChange.bind(this, 'address')}/>
+                            <Form.Item label="商家地区 :">
+                                <DistPicker
+                                    onSelect={this._onSelect}
+                                />
+                            </Form.Item>
+                            <Form.Item label="详细地址 :">
+                                <Input value={this.state.form.detailAddress}
+                                       onChange={this.onChange.bind(this, 'detailAddress')}/>
                             </Form.Item>
                             <Form.Item label="商家Logo :">
                                 <Upload
-                                    className="upload-demo"
+                                    className="avatar-uploader"
                                     action="//jsonplaceholder.typicode.com/posts/"
-                                    onPreview={file => this.handlePreview(file)}
-                                    onRemove={(file, fileList) => this.handleRemove(file, fileList)}
-                                    fileList={file}
-                                    limit={1}
-                                    onExceed={(files, fileList) => {
-                                        Message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-                                    }}
-                                    tip={<div className="el-upload__tip">只能上传jpg/png文件，且不超过2M</div>}
+                                    showFileList={false}
+                                    onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
+                                    beforeUpload={file => this.beforeAvatarUpload(file)}
                                 >
-                                    <Button size="small" type="primary">点击上传</Button>
+                                    { imageUrl ? <img src={imageUrl} className="avatar" /> : <i className="el-icon-plus avatar-uploader-icon"/> }
                                 </Upload>
                             </Form.Item>
-                            <Form.Item >
-                                <Button type="primary" nativeType="submit">确定</Button>
+                            <Form.Item>
+                                <Button type="primary" nativeType="submit" onClick={this.editMessage}>确定</Button>
                                 <Button>取消</Button>
                             </Form.Item>
 
@@ -111,4 +172,13 @@ class BusinessEdit extends Component {
     }
 }
 
-export default BusinessEdit
+export default connect(
+    (state) => ({
+        businessMessageData: state.businessMessageReducer.businessMessageData,
+        businessMessageError: state.businessMessageReducer.businessMessageError,
+    }),
+    (dispatch) => ({
+        getBusinessMessage: (params) => dispatch(businessMessageAction.getBusinessMessage(params)),
+    })
+)(BusinessEdit)
+

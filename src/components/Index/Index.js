@@ -10,22 +10,21 @@ class Index extends Component {
     }
 
     componentDidMount() {
-       // this.isLoading()
+        // this.isLoading()
     }
 
 
     isLoading = () => {
         const {loginData} = this.props
-        if(!loginData || loginData.code !== 2000){
+        if (!loginData || loginData.code !== 2000) {
             this.props.history.push('/Login')
         }
     }
 
     render() {
+        const {history} = this.props
         return (
-            <div>
-                <NavMenu/>
-            </div>
+            <NavMenu history={history}/>
         )
     }
 }
@@ -35,7 +34,5 @@ export default connect(
         loginData: state.loginReducer.loginData,
         loginError: state.loginReducer.loginError,
     }),
-    (dispatch) => ({
-
-    })
+    (dispatch) => ({})
 )(Index)

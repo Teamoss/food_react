@@ -31,12 +31,11 @@ class BusinessEdit extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {form, file,imageUrl} = this.state
+        const {form} = this.state
         if (nextProps.businessMessageData) {
             let data = nextProps.businessMessageData
             if (data.code === 2000) {
                 let userInfo = data.userInfo
-                form.logo = userInfo.logo
                 form.name = userInfo.business
                 form.message = userInfo.content
                 this.setState({
@@ -56,8 +55,10 @@ class BusinessEdit extends Component {
     }
 
     handleAvatarScucess(res, file) {
-        console.log(res,file)
-        this.setState({ imageUrl: URL.createObjectURL(file.raw) });
+        this.setState({
+            imageUrl:res.logo
+        })
+        // this.setState({ imageUrl: URL.createObjectURL(file.raw) });
     }
 
     beforeAvatarUpload(file) {
@@ -100,19 +101,35 @@ class BusinessEdit extends Component {
 
     //确定编辑
     editMessage = () => {
-        const {imageUrl} = this.state
-        console.log(imageUrl)
-        // axios.post(Connect.editBusinessMessage, {
-        //     imageUrl
-        // }).then(res => {
-        //     console.log(res)
-        // })
-        //     .catch(err => {
-        //         console.log(err)
-        //     });
-        // const {city, form, imageUrl} = this.state
-        // let addressMess = city ? city + form.detailAddress : form.detailAddress
-        // console.log(imageUrl)
+        const {city, form, imageUrl} = this.state
+        let addressMess = city ? city + form.detailAddress : form.detailAddress
+        let data = JSON.parse(sessionStorage.getItem('userInfo'));
+        let userID = data._id
+        axios.post(Connect.editBusinessMessage,{
+            userID,
+            addressMess,
+            form,
+            imageUrl
+        }).then(res=>{
+           if(res.data.code === 2000){
+               Message({
+                   showClose: true,
+                   message: res.data.message,
+                   type: 'success'
+               });
+               this.props.history.push('/Index/business')
+           }
+            if(res.data.code === 2001){
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'error'
+                });
+            }
+        }).catch(err=>{
+               console.log(err)
+        })
+
     }
 
     render() {
@@ -150,7 +167,7 @@ class BusinessEdit extends Component {
                             <Form.Item label="商家Logo :">
                                 <Upload
                                     className="avatar-uploader"
-                                    action="//jsonplaceholder.typicode.com/posts/"
+                                    action="http://localhost:5000/api/uploadLogo"
                                     showFileList={false}
                                     onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
                                     beforeUpload={file => this.beforeAvatarUpload(file)}

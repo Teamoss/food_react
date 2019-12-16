@@ -10,6 +10,8 @@ let Connect = {
     getBusinessMessage: host + '/api/getBusinessMessage',
     //编辑商家信息
     editBusinessMessage: host + '/api/editBusinessMessage',
+    //上传商家logo图片
+    uploadLogo: host + '/api/uploadLogo',
 }
 
 module.exports = Connect

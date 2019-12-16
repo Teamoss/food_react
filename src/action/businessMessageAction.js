@@ -3,7 +3,6 @@ import axios from 'axios'
 import Connect from '../service/address'
 
 export const getBusinessMessage = (params) => {
-    console.log(params)
     return dispatch =>{
         axios.post(Connect.getBusinessMessage,params)
             .then(res=>{

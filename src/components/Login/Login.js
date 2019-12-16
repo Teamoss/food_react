@@ -59,32 +59,6 @@ class Login extends Component {
             username: form.username,
             password: form.password
         })
-        // const {form} = this.state
-        // axios.post(Connect.login, {
-        //     username: form.username,
-        //     password: form.password
-        // })
-        //     .then(res => {
-        //         if (res.data.code === 2000) {
-        //             Message({
-        //                 showClose: true,
-        //                 message: res.data.message,
-        //                 type: 'success'
-        //             });
-        //             this.props.history.push({pathname: '/Index', state: {userId: res.data.userInfo._id}})
-        //         }
-        //         if (res.data.code === 2001) {
-        //             Message({
-        //                 showClose: true,
-        //                 message: res.data.message,
-        //                 type: 'error'
-        //             });
-        //         }
-        //     })
-        //     .catch(err => {
-        //         console.log(err)
-        //     });
-
     }
 
     //注册

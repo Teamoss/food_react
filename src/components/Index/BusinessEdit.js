@@ -22,7 +22,7 @@ class BusinessEdit extends Component {
                 detailAddress: '',
             },
             city: null,
-            imageUrl:null
+            imageUrl: null
         };
     }
 
@@ -39,7 +39,7 @@ class BusinessEdit extends Component {
                 form.name = userInfo.business
                 form.message = userInfo.content
                 this.setState({
-                    imageUrl : userInfo.logo
+                    imageUrl: userInfo.logo
                 })
             }
         }
@@ -55,10 +55,11 @@ class BusinessEdit extends Component {
     }
 
     handleAvatarScucess(res, file) {
-        this.setState({
-            imageUrl:res.logo
-        })
-        // this.setState({ imageUrl: URL.createObjectURL(file.raw) });
+        if (res.code === 2000) {
+            this.setState({
+                imageUrl: res.logo
+            })
+        }
     }
 
     beforeAvatarUpload(file) {
@@ -105,31 +106,35 @@ class BusinessEdit extends Component {
         let addressMess = city ? city + form.detailAddress : form.detailAddress
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let userID = data._id
-        axios.post(Connect.editBusinessMessage,{
+        axios.post(Connect.editBusinessMessage, {
             userID,
             addressMess,
             form,
             imageUrl
-        }).then(res=>{
-           if(res.data.code === 2000){
-               Message({
-                   showClose: true,
-                   message: res.data.message,
-                   type: 'success'
-               });
-               this.props.history.push('/Index/business')
-           }
-            if(res.data.code === 2001){
+        }).then(res => {
+            if (res.data.code === 2000) {
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'success'
+                });
+                this.props.history.push('/Index/business')
+            }
+            if (res.data.code === 2001) {
                 Message({
                     showClose: true,
                     message: res.data.message,
                     type: 'error'
                 });
             }
-        }).catch(err=>{
-               console.log(err)
+        }).catch(err => {
+            console.log(err)
         })
+    }
 
+
+    cancel = () => {
+        this.props.history.push('/Index/business')
     }
 
     render() {
@@ -172,12 +177,13 @@ class BusinessEdit extends Component {
                                     onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
                                     beforeUpload={file => this.beforeAvatarUpload(file)}
                                 >
-                                    { imageUrl ? <img src={imageUrl} className="avatar" /> : <i className="el-icon-plus avatar-uploader-icon"/> }
+                                    {imageUrl ? <img src={imageUrl} className="avatar"/> :
+                                        <i className="el-icon-plus avatar-uploader-icon"/>}
                                 </Upload>
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" nativeType="submit" onClick={this.editMessage}>确定</Button>
-                                <Button>取消</Button>
+                                <Button  nativeType="submit" onClick={this.cancel}>取消</Button>
                             </Form.Item>
 
                         </Form>

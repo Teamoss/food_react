@@ -6,18 +6,30 @@ import BusinessEdit from './BusinessEdit'
 import Business from './Business'
 import FoodMenu from './FoodMenu'
 import AddFood from './AddFood'
+import EditFood from './EditFood'
+
 
 class NavMenu extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            username:null
+        };
+    }
+
+    componentDidMount() {
+        let data = JSON.parse(sessionStorage.getItem('userInfo'));
+        let username = data.username
+        this.setState({
+            username
+        })
     }
 
     onSelect = (index) => {
-        if (index == 1) {
+        if (index == '1-1') {
 
         }
-        if (index == 2) {
+        if (index == '1-2') {
 
         }
         if (index == '2-1') {
@@ -26,25 +38,22 @@ class NavMenu extends Component {
         if (index == '2-2') {
             this.props.history.push('/Index/AddFood')
         }
-        if (index == 3) {
-
-        }
-        if (index == 4) { //退出登录
+        if (index == 5) { //退出登录
             this.props.history.push("/Login");
         }
     }
 
     render() {
+        const {username} = this.state
         return (
             <div style={{height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
                 <Menu theme="dark" defaultActive="1" className="el-menu-demo" mode="horizontal"
                       onSelect={this.onSelect.bind(this)}>
                     <Layout.Row>
-                        <Layout.Col span="22">
+                        <Layout.Col span="19">
                             <Menu.SubMenu index="1" title="订单管理">
-                                <Menu.Item index="1-1">选项1</Menu.Item>
-                                <Menu.Item index="1-2">选项2</Menu.Item>
-                                <Menu.Item index="1-3">选项3</Menu.Item>
+                                <Menu.Item index="1-1">待接订单</Menu.Item>
+                                <Menu.Item index="1-2">已接订单</Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu index="2" title="菜单管理">
                                 <Menu.Item index="2-1">菜单管理</Menu.Item>
@@ -54,8 +63,11 @@ class NavMenu extends Component {
                                 <Menu.Item index="3">商家信息</Menu.Item>
                             </Link>
                         </Layout.Col>
+                        <Layout.Col span="3">
+                            <Menu.Item index="4">欢迎用户：{username}</Menu.Item>
+                        </Layout.Col>
                         <Layout.Col span="2">
-                            <Menu.Item index="4">退出</Menu.Item>
+                            <Menu.Item index="5">退出</Menu.Item>
                         </Layout.Col>
                     </Layout.Row>
 
@@ -65,6 +77,7 @@ class NavMenu extends Component {
                     <Route exact path='/Index/business/businessEdit' component={BusinessEdit}/>
                     <Route exact path='/Index/FoodMenu' component={FoodMenu}/>
                     <Route exact path='/Index/AddFood' component={AddFood}/>
+                    <Route exact path='/Index/EditFood' component={EditFood}/>
                 </Switch>
             </div>
         )

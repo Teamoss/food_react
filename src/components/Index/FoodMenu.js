@@ -1,7 +1,11 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Layout, Table, Button, Pagination} from 'element-react';
+import {Layout, Table, Button, Pagination, Message} from 'element-react';
 import {connect} from "react-redux";
+import * as foodAction from "../../action/foodAction";
+import Connect from "../../service/address";
+import axios from "axios";
+
 
 class FoodMenu extends Component {
 
@@ -11,8 +15,12 @@ class FoodMenu extends Component {
         this.state = {
             columns: [
                 {
-                    type: 'index',
                     label: "序号",
+                    width: 100,
+                    render: (row, column, index) => {
+                        const {pageNo, pageSize} = this.state
+                        return <span>{(pageNo - 1) * pageSize + index + 1}</span>
+                    }
                 },
                 {
                     label: "名称",
@@ -32,105 +40,167 @@ class FoodMenu extends Component {
                 },
                 {
                     label: "图片",
-                    prop: "image",
-                    width: 250,
+                    prop: "imageUrl",
+                    width: 200,
                     render: function (data) {
-                        return <span><img height={55} src={data.image} alt="暂无图片"/></span>
+                        return <span><img height={55} src={data.imageUrl} alt="暂无图片"/></span>
                     }
                 },
                 {
                     label: "介绍",
-                    prop: "describe",
-                    width: 490,
+                    prop: "description",
+                    width: 430,
                     render: function (data) {
-                        return <span>{data.describe}</span>
+                        return <span>{data.description}</span>
                     }
                 },
                 {
                     label: "编辑",
-                    render: () => {
+                    prop: "_id",
+                    render: (data) => {
                         return (
                             <span>
-             <Button plain={true} type="info">编辑</Button>
+             <Button type="primary" onClick={() => this.editFood(data)}>编辑</Button>
             </span>
                         )
                     }
                 },
                 {
                     label: "删除",
-                    render: () => {
+                    render: (data) => {
                         return (
                             <span>
-             <Button type="danger">删除</Button>
+             <Button type="danger" onClick={() => this.deleteFood(data)}>删除</Button>
             </span>
                         )
                     }
                 }
             ],
-            data: [
-                {
-                    id: null,
-                    name: '暂无名称',
-                    price: '20.1',
-                    image: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIAtibsicGaUUAGpGr8yo5G7MibcxgUPUreak1h1MAlp2quibB9qXxuruTdVnepiavDz8Tu9OIruLHMb7A/132',
-                    describe: '无'
-                },
-                {
-                    id: null,
-                    name: '暂无名称',
-                    price: '20.2',
-                    image: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIAtibsicGaUUAGpGr8yo5G7MibcxgUPUreak1h1MAlp2quibB9qXxuruTdVnepiavDz8Tu9OIruLHMb7A/132',
-                    describe: '无'
-                },
-               
-            ]
+            data: [],
+            total: null,
+            pageSize: 8,
+            pageNo: 1
         }
     }
 
+    componentDidMount() {
+        //加载数据
+        this.loadingData()
+    }
 
-    onCellClick = (row, column) => {
-        let data = row
-        let index = column.columnKey
-        if (index == 'el-table_1_column_6') { //编辑
-            console.log(data)
-        }
-        if (index == 'el-table_1_column_7') { //删除
-            console.log(data)
+    componentWillReceiveProps(nextProps) {
+        if (nextProps && nextProps.foodData && nextProps.foodData.code === 2000) {
+            let foodData = nextProps.foodData
+            this.setState({
+                data: foodData.data,
+                total: foodData.total
+            })
         }
     }
+
+    loadingData = () => {
+        const {findAllFood,} = this.props
+        const {pageSize, pageNo} = this.state
+        let data = JSON.parse(sessionStorage.getItem('userInfo'));
+        let business = data._id
+        findAllFood({
+            business,
+            pageSize,
+            pageNo
+        })
+    }
+
+    //编辑菜单
+    editFood = (data) => {
+        this.props.history.push({pathname: "/Index/EditFood", state: {data}});
+    }
+
+    //删除菜单
+    deleteFood = (data) => {
+        let id = data._id
+        axios.post(Connect.deleteFood, {
+            id
+        }).then(res => {
+            if (res.data.code === 2000) {
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'success'
+                });
+                this.loadingData()
+            }
+            if (res.data.code === 2001) {
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'error'
+                });
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
+
+    //页数改变
+    _onCurrentChange = (currentPage) => {
+        const {findAllFood,} = this.props
+        const {pageSize} = this.state
+        let data = JSON.parse(sessionStorage.getItem('userInfo'));
+        let business = data._id
+        this.setState({
+            pageNo: currentPage
+        })
+        findAllFood({
+            business,
+            pageSize,
+            pageNo: currentPage
+        })
+    }
+
+    //双击栏目编辑菜单
+    // _onCellDbClick = (row) => {
+    //     this.props.history.push({pathname: "/Index/EditFood", state: {data: row}});
+    // }
 
     render() {
+        const {total, pageSize} = this.state
+
         return (
             <div>
                 <Table
                     style={{width: '100%'}}
                     columns={this.state.columns}
                     data={this.state.data}
+                    height={540}
                     border={true}
                     highlightCurrentRow={true}
-                    onCellClick={this.onCellClick}
+                    // onCellDbClick={(row) => this._onCellDbClick(row)}
                 />
                 <div style={{
-                    marginTop:10
+                    marginTop: 10
                 }}>
                     <div className="first">
                         <div className="block">
-                            <Pagination layout="prev, pager, next" total={10} pageSize={8}/>
+                            <Pagination layout="prev, pager, next"
+                                        total={total}
+                                        pageSize={pageSize}
+                                        onCurrentChange={(currentPage) => this._onCurrentChange(currentPage)}
+                            />
                         </div>
                     </div>
                 </div>
-
             </div>
-
         )
     }
 }
 
 export default connect(
     (state) => ({
-
+        foodData: state.foodReducer.foodData,
+        foodError: state.foodReducer.foodError,
     }),
     (dispatch) => ({
-
+        findAllFood: (params) => dispatch(foodAction.findAllFood(params)),
     })
 )(FoodMenu)

@@ -12,6 +12,14 @@ let Connect = {
     editBusinessMessage: host + '/api/editBusinessMessage',
     //上传商家logo图片
     uploadLogo: host + '/api/uploadLogo',
+    //添加食物
+    addFood: host + '/api/addFood',
+    //查询所有菜单
+    findAllFood: host + '/api/findAllFood',
+    //删除菜单
+    deleteFood: host + '/api/deleteFood',
+    //编辑菜单
+    editFood: host + '/api/editFood',
 }
 
 module.exports = Connect

@@ -7,6 +7,8 @@ import Business from './Business'
 import FoodMenu from './FoodMenu'
 import AddFood from './AddFood'
 import EditFood from './EditFood'
+import MissOrder from './MissOrder'
+import ReceivedOrder from './ReceivedOrder'
 
 
 class NavMenu extends Component {
@@ -27,10 +29,10 @@ class NavMenu extends Component {
 
     onSelect = (index) => {
         if (index == '1-1') {
-
+            this.props.history.push('/Index/MissOrder')
         }
         if (index == '1-2') {
-
+            this.props.history.push('/Index/ReceivedOrder')
         }
         if (index == '2-1') {
             this.props.history.push('/Index/FoodMenu')
@@ -70,14 +72,16 @@ class NavMenu extends Component {
                             <Menu.Item index="5">退出</Menu.Item>
                         </Layout.Col>
                     </Layout.Row>
-
                 </Menu>
                 <Switch>
+                    <Route exact path='/Index' component={MissOrder}/>
                     <Route exact path='/Index/business' component={Business}/>
                     <Route exact path='/Index/business/businessEdit' component={BusinessEdit}/>
                     <Route exact path='/Index/FoodMenu' component={FoodMenu}/>
                     <Route exact path='/Index/AddFood' component={AddFood}/>
                     <Route exact path='/Index/EditFood' component={EditFood}/>
+                    <Route exact path='/Index/MissOrder' component={MissOrder}/>
+                    <Route exact path='/Index/ReceivedOrder' component={ReceivedOrder}/>
                 </Switch>
             </div>
         )

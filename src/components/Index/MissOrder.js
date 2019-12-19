@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Layout, Table, Button, Pagination, Message} from 'element-react';
+import {Layout, Table, Button, Pagination, Message, TimeSelect} from 'element-react';
 import {connect} from "react-redux";
 import * as foodAction from "../../action/foodAction";
 import Connect from "../../service/address";
@@ -16,7 +16,7 @@ class MissOrder extends Component {
             columns: [
                 {
                     label: "序号",
-                    width: 70,
+                    width: 60,
                     render: (row, column, index) => {
                         const {pageNo, pageSize} = this.state
                         return <span>{(pageNo - 1) * pageSize + index + 1}</span>
@@ -25,7 +25,7 @@ class MissOrder extends Component {
                 {
                     label: "下单顾客",
                     prop: "name",
-                    width: 150,
+                    width: 120,
                     render: function (data) {
                         return <span>{data.name}</span>
                     }
@@ -33,7 +33,7 @@ class MissOrder extends Component {
                 {
                     label: "订单价格",
                     prop: "price",
-                    width: 150,
+                    width: 120,
                     render: function (data) {
                         return <span>￥{data.price}</span>
                     }
@@ -43,23 +43,40 @@ class MissOrder extends Component {
                     prop: "timeOrder",
                     width: 200,
                     render: function (data) {
-                        return <span>{data.time}</span>
+                        return <span>{data.timeOrder}</span>
+                    }
+                },
+                {
+                    label: "预计送达时间",
+                    prop: "timeDelivery",
+                    width: 220,
+                    render: () => {
+                        return (
+                            <TimeSelect
+                                start="06:30"
+                                step="00:15"
+                                end="23:30"
+                                onChange={this.handleUpdate.bind(this)}
+                                value={this.state.timeValue}
+                                placeholder="选择时间"
+                            />
+                        )
                     }
                 },
                 {
                     label: "订单信息",
                     prop: "orderMessage",
-                    width: 380,
+                    width: 300,
                     render: function (data) {
-                        return <span>{data.time}</span>
+                        return <span>{data.orderMessage}</span>
                     }
                 },
                 {
                     label: "配送地址",
                     prop: "address",
-                    width: 350,
+                    width: 300,
                     render: function (data) {
-                        return <span>{data.description}</span>
+                        return <span>{data.address}</span>
                     }
                 },
                 {
@@ -74,11 +91,13 @@ class MissOrder extends Component {
                 }
             ],
             data: [
-
+                {address: 123}
             ],
             total: null,
             pageSize: 8,
-            pageNo: 1
+            pageNo: 1,
+            timeValue: null,
+            sendTime: null
         }
     }
 
@@ -97,6 +116,27 @@ class MissOrder extends Component {
     //     }
     // }
 
+
+    handleUpdate = (time) => {
+        if (time) {
+            let arr = time.toString().split(/\s+/)
+            let _time = arr[4]
+            let myDate = new Date();
+            let year = myDate.getFullYear();
+            let month = myDate.getMonth() + 1;
+            let date = myDate.getDate();
+            let sendTime = `${year}-${month}-${date} ${_time}`
+            let detailTime = _time.toString().split(':')
+            let house = detailTime[0]
+            let minute = detailTime[1]
+            this.setState({
+                timeValue: new Date(year, month, date, house, minute),
+                sendTime
+            })
+        }
+    }
+
+
     loadingData = () => {
         const {findAllFood,} = this.props
         const {pageSize, pageNo} = this.state
@@ -112,7 +152,16 @@ class MissOrder extends Component {
 
     //接受订单
     acceptOrder = (data) => {
+        const {sendTime} = this.state
+        if (sendTime) {
 
+        } else {
+            Message({
+                showClose: true,
+                message: '请选择预计送达时间',
+                type: 'error'
+            });
+        }
     }
 
     // //删除菜单

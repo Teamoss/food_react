@@ -43,7 +43,7 @@ class ReceivedOrder extends Component {
                     prop: "timeOrder",
                     width: 200,
                     render: function (data) {
-                        return <span>{data.time}</span>
+                        return <span>{data.timeOrder}</span>
                     }
                 },
                 {
@@ -51,7 +51,7 @@ class ReceivedOrder extends Component {
                     prop: "timeDelivery",
                     width: 200,
                     render: function (data) {
-                        return <span>{data.time}</span>
+                        return <span>{data.timeDelivery}</span>
                     }
                 },
                 {
@@ -59,7 +59,7 @@ class ReceivedOrder extends Component {
                     prop: "orderMessage",
                     width: 300,
                     render: function (data) {
-                        return <span>{data.time}</span>
+                        return <span>{data.orderMessage}</span>
                     }
                 },
                 {
@@ -67,7 +67,7 @@ class ReceivedOrder extends Component {
                     prop: "address",
                     width: 300,
                     render: function (data) {
-                        return <span>{data.description}</span>
+                        return <span>{data.address}</span>
                     }
                 },
                 {

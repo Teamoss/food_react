@@ -23,9 +23,9 @@ class MissOrder extends Component {
                     }
                 },
                 {
-                    label: "下单顾客",
+                    label: "订单顾客",
                     prop: "name",
-                    width: 120,
+                    width: 110,
                     render: function (data) {
                         return <span>{data.name}</span>
                     }
@@ -33,15 +33,15 @@ class MissOrder extends Component {
                 {
                     label: "订单价格",
                     prop: "price",
-                    width: 120,
+                    width: 110,
                     render: function (data) {
                         return <span>￥{data.price}</span>
                     }
                 },
                 {
-                    label: "下单时间",
+                    label: "订单时间",
                     prop: "timeOrder",
-                    width: 200,
+                    width: 150,
                     render: function (data) {
                         return <span>{data.timeOrder}</span>
                     }
@@ -69,6 +69,14 @@ class MissOrder extends Component {
                     width: 300,
                     render: function (data) {
                         return <span>{data.orderMessage}</span>
+                    }
+                },
+                {
+                    label: "联系电话",
+                    prop: "phone",
+                    width: 170,
+                    render: function (data) {
+                        return <span>{data.name}</span>
                     }
                 },
                 {

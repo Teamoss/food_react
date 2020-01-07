@@ -34,6 +34,9 @@ class NavMenu extends Component {
         if (index == '1-2') {
             this.props.history.push('/Index/ReceivedOrder')
         }
+        if (index == '1-3') {
+            this.props.history.push('/Index/FinishOrder')
+        }
         if (index == '2-1') {
             this.props.history.push('/Index/FoodMenu')
         }
@@ -56,6 +59,7 @@ class NavMenu extends Component {
                             <Menu.SubMenu index="1" title="订单管理">
                                 <Menu.Item index="1-1">待接订单</Menu.Item>
                                 <Menu.Item index="1-2">已接订单</Menu.Item>
+                                <Menu.Item index="1-3">完成订单</Menu.Item>
                             </Menu.SubMenu>
                             <Menu.SubMenu index="2" title="菜单管理">
                                 <Menu.Item index="2-1">菜单管理</Menu.Item>

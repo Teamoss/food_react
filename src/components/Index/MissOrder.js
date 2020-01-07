@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Layout, Table, Button, Pagination, Message, TimeSelect} from 'element-react';
+import {Layout, Table, Button, Pagination, Message} from 'element-react';
 import {connect} from "react-redux";
-import * as foodAction from "../../action/foodAction";
+import * as orderAction from "../../action/orderAction";
 import Connect from "../../service/address";
 import axios from "axios";
 
@@ -25,70 +25,104 @@ class MissOrder extends Component {
                 {
                     label: "订单顾客",
                     prop: "name",
-                    width: 110,
+                    width: 100,
                     render: function (data) {
                         return <span>{data.name}</span>
                     }
                 },
                 {
-                    label: "订单价格",
-                    prop: "price",
-                    width: 110,
-                    render: function (data) {
-                        return <span>￥{data.price}</span>
-                    }
-                },
-                {
                     label: "订单时间",
-                    prop: "timeOrder",
-                    width: 150,
+                    prop: "orderTime",
+                    width: 180,
                     render: function (data) {
-                        return <span>{data.timeOrder}</span>
+                        return <span>{data.orderTime}</span>
                     }
                 },
                 {
                     label: "预计送达时间",
-                    prop: "timeDelivery",
-                    width: 220,
-                    render: () => {
-                        return (
-                            <TimeSelect
-                                start="06:30"
-                                step="00:15"
-                                end="23:30"
-                                onChange={this.handleUpdate.bind(this)}
-                                value={this.state.timeValue}
-                                placeholder="选择时间"
-                            />
-                        )
+                    prop: "sendTime",
+                    width: 130,
+                    render: function (data) {
+                        return <span>{data.sendTime}</span>
                     }
                 },
                 {
                     label: "订单信息",
-                    prop: "orderMessage",
-                    width: 300,
+                    prop: "food",
+                    width: 500,
+                    render: (data) => {
+                        return <div style={{}}>
+                            {data.food.map((item, index) => {
+                                return (
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginBottom: 5
+                                    }} key={index}>
+                                        <div style={{
+                                            flex: 1,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            marginBottom: 1,
+                                            marginTop: 1,
+                                        }}>
+                                            <img style={{
+                                                width: 40,
+                                                height: 40
+                                            }} src={item.imageUrl} alt='food'/>
+                                        </div>
+                                        <span style={{
+                                            flex: 1,
+                                            marginLeft: 10
+                                        }}>{item.name}</span>
+                                        <span style={{
+                                            marginLeft: 20,
+                                            color: 'red',
+                                            flex: 2,
+                                        }}>x{item.number}</span>
+                                        <span style={{
+                                            flex: 2,
+                                            color: 'red',
+                                        }}>￥{item.price}</span>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+
+                    }
+                },
+                {
+                    label: "订单总额",
+                    prop: "sumMoney",
+                    width: 100,
                     render: function (data) {
-                        return <span>{data.orderMessage}</span>
+                        return <span style={{
+                            color: 'red'
+                        }}>￥{data.sumMoney}</span>
                     }
                 },
                 {
                     label: "联系电话",
                     prop: "phone",
-                    width: 170,
+                    width: 130,
                     render: function (data) {
-                        return <span>{data.name}</span>
+                        return <span>{data.phone}</span>
                     }
                 },
                 {
                     label: "配送地址",
                     prop: "address",
-                    width: 300,
+                    width: 200,
                     render: function (data) {
                         return <span>{data.address}</span>
                     }
                 },
                 {
                     label: "是否接单",
+                    width: 100,
                     render: (data) => {
                         return (
                             <span>
@@ -98,59 +132,65 @@ class MissOrder extends Component {
                     }
                 }
             ],
-            data: [
-                {address: 123}
-            ],
+            data: [],
             total: null,
             pageSize: 8,
-            pageNo: 1,
-            timeValue: null,
-            sendTime: null
+            pageNo: 1
         }
     }
 
     componentDidMount() {
         //加载数据
-        // this.loadingData()
+        this.loadingData()
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if (nextProps && nextProps.foodData && nextProps.foodData.code === 2000) {
-    //         let foodData = nextProps.foodData
-    //         this.setState({
-    //             data: foodData.data,
-    //             total: foodData.total
-    //         })
-    //     }
-    // }
-
-
-    handleUpdate = (time) => {
-        if (time) {
-            let arr = time.toString().split(/\s+/)
-            let _time = arr[4]
-            let myDate = new Date();
-            let year = myDate.getFullYear();
-            let month = myDate.getMonth() + 1;
-            let date = myDate.getDate();
-            let sendTime = `${year}-${month}-${date} ${_time}`
-            let detailTime = _time.toString().split(':')
-            let house = detailTime[0]
-            let minute = detailTime[1]
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.orderData && nextProps.orderData.code === 2000) {
+            let orderData = nextProps.orderData
+            orderData.data.forEach(item => {
+                item['food'] = JSON.parse(item.food)
+            })
             this.setState({
-                timeValue: new Date(year, month, date, house, minute),
-                sendTime
+                data: orderData.data,
+                total: orderData.total
             })
         }
     }
 
+    //商家接单
+    acceptOrder = (data) => {
+        let id = data._id
+        axios.post(Connect.changeOrder, {
+            id,
+            type: 1
+        }).then(res => {
+            if (res.data.code === 2000) {
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'success'
+                });
+                this.loadingData()
+            }
+            if (res.data.code === 2001) {
+                Message({
+                    showClose: true,
+                    message: res.data.message,
+                    type: 'error'
+                });
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
 
     loadingData = () => {
-        const {findAllFood,} = this.props
+        const {findAllBusinessOrder} = this.props
         const {pageSize, pageNo} = this.state
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let business = data._id
-        findAllFood({
+        findAllBusinessOrder({
+            type: 0,
             business,
             pageSize,
             pageNo
@@ -158,57 +198,17 @@ class MissOrder extends Component {
     }
 
 
-    //接受订单
-    acceptOrder = (data) => {
-        const {sendTime} = this.state
-        if (sendTime) {
-
-        } else {
-            Message({
-                showClose: true,
-                message: '请选择预计送达时间',
-                type: 'error'
-            });
-        }
-    }
-
-    // //删除菜单
-    // deleteFood = (data) => {
-    //     let id = data._id
-    //     axios.post(Connect.deleteFood, {
-    //         id
-    //     }).then(res => {
-    //         if (res.data.code === 2000) {
-    //             Message({
-    //                 showClose: true,
-    //                 message: res.data.message,
-    //                 type: 'success'
-    //             });
-    //             this.loadingData()
-    //         }
-    //         if (res.data.code === 2001) {
-    //             Message({
-    //                 showClose: true,
-    //                 message: res.data.message,
-    //                 type: 'error'
-    //             });
-    //         }
-    //     }).catch(err => {
-    //         console.log(err)
-    //     })
-    // }
-
-
     //页数改变
     _onCurrentChange = (currentPage) => {
-        const {findAllFood,} = this.props
+        const {findAllBusinessOrder,} = this.props
         const {pageSize} = this.state
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let business = data._id
         this.setState({
             pageNo: currentPage
         })
-        findAllFood({
+        findAllBusinessOrder({
+            type: 0,
             business,
             pageSize,
             pageNo: currentPage
@@ -216,6 +216,7 @@ class MissOrder extends Component {
     }
 
     render() {
+
         const {total, pageSize} = this.state
 
         return (
@@ -248,10 +249,10 @@ class MissOrder extends Component {
 
 export default connect(
     (state) => ({
-        foodData: state.foodReducer.foodData,
-        foodError: state.foodReducer.foodError,
+        orderData: state.orderReducer.orderData,
+        orderError: state.orderReducer.orderError,
     }),
     (dispatch) => ({
-        findAllFood: (params) => dispatch(foodAction.findAllFood(params)),
+        findAllBusinessOrder: (params) => dispatch(orderAction.findAllBusinessOrder(params)),
     })
 )(MissOrder)

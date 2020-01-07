@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Layout, Table, Button, Pagination, Message} from 'element-react';
+import {Layout, Table, Button, Pagination, Message, TimeSelect} from 'element-react';
 import {connect} from "react-redux";
 import * as foodAction from "../../action/foodAction";
 import Connect from "../../service/address";
@@ -25,21 +25,13 @@ class ReceivedOrder extends Component {
                 {
                     label: "下单顾客",
                     prop: "name",
-                    width: 110,
+                    width: 100,
                     render: function (data) {
                         return <span>{data.name}</span>
                     }
                 },
                 {
-                    label: "订单价格",
-                    prop: "price",
-                    width: 110,
-                    render: function (data) {
-                        return <span>￥{data.price}</span>
-                    }
-                },
-                {
-                    label: "下单时间",
+                    label: "订单时间",
                     prop: "timeOrder",
                     width: 150,
                     render: function (data) {
@@ -47,43 +39,103 @@ class ReceivedOrder extends Component {
                     }
                 },
                 {
-                    label: "预计送达时间",
+                    label: "送达时间",
                     prop: "timeDelivery",
                     width: 220,
-                    render: function (data) {
-                        return <span>{data.timeDelivery}</span>
+                    render: () => {
+                        return (
+                            <TimeSelect
+                                start="06:30"
+                                step="00:15"
+                                end="23:30"
+                                onChange={this.handleUpdate.bind(this)}
+                                value={this.state.timeValue}
+                                placeholder="选择时间"
+                            />
+                        )
                     }
                 },
                 {
                     label: "订单信息",
-                    prop: "orderMessage",
-                    width: 300,
+                    prop: "food",
+                    width: 400,
+                    render: (data) => {
+                        return <div style={{}}>
+                            {data.food.map((item,index) => {
+                                return (
+                                    <div style={{
+                                        display:'flex',
+                                        flexDirection:'row',
+                                        alignItems:'center',
+                                        marginBottom:5
+                                    }} key={index}>
+                                        <div style={{
+                                            flex:1,
+                                            display:'flex',
+                                            alignItems:'center',
+                                            justifyContent: 'center',
+                                            marginBottom:1,
+                                            marginTop:1,
+                                        }}>
+                                            <img style={{
+                                                width: 40,
+                                                height: 40
+                                            }} src={item.imageUrl} alt='food'/>
+                                        </div>
+                                        <span style={{
+                                            flex:1,
+                                            marginLeft:10
+                                        }}>{item.name}</span>
+                                        <span style={{
+                                            marginLeft:20,
+                                            color:'red',
+                                            flex:2,
+                                        }}>x{item.number}</span>
+                                        <span style={{
+                                            flex:2,
+                                            color:'red',
+                                        }}>￥{item.price}</span>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+
+                    }
+                },
+                {
+                    label: "订单总额",
+                    prop: "sumMoney",
+                    width: 100,
                     render: function (data) {
-                        return <span>{data.orderMessage}</span>
+                        return <span style={{
+                            color:'red'
+                        }}>￥{data.sumMoney}</span>
                     }
                 },
                 {
                     label: "联系电话",
                     prop: "phone",
-                    width: 170,
+                    width: 130,
                     render: function (data) {
-                        return <span>{data.name}</span>
+                        return <span>{data.phone}</span>
                     }
                 },
                 {
                     label: "配送地址",
                     prop: "address",
-                    width: 300,
+                    width: 200,
                     render: function (data) {
                         return <span>{data.address}</span>
                     }
                 },
                 {
                     label: "是否送达",
+                    width: 100,
                     render: (data) => {
                         return (
                             <span>
-             <Button type="primary" onClick={() => this.completeOrder(data)}>是</Button>
+             <Button type="primary" onClick={() => this.finishOrder(data)}>是</Button>
             </span>
                         )
                     }
@@ -94,7 +146,9 @@ class ReceivedOrder extends Component {
             ],
             total: null,
             pageSize: 8,
-            pageNo: 1
+            pageNo: 1,
+            timeValue: null,
+            sendTime: null
         }
     }
 
@@ -113,6 +167,26 @@ class ReceivedOrder extends Component {
     //     }
     // }
 
+
+    handleUpdate = (time) => {
+        if (time) {
+            let arr = time.toString().split(/\s+/)
+            let _time = arr[4]
+            let myDate = new Date();
+            let year = myDate.getFullYear();
+            let month = myDate.getMonth() + 1;
+            let date = myDate.getDate();
+            let sendTime = `${year}-${month}-${date} ${_time}`
+            let detailTime = _time.toString().split(':')
+            let house = detailTime[0]
+            let minute = detailTime[1]
+            this.setState({
+                timeValue: new Date(year, month, date, house, minute),
+                sendTime
+            })
+        }
+    }
+
     loadingData = () => {
         const {findAllFood,} = this.props
         const {pageSize, pageNo} = this.state
@@ -126,10 +200,20 @@ class ReceivedOrder extends Component {
     }
 
 
-    //是否送达
-    completeOrder = (data) => {
+    //送达订单
+    finishOrder = (data) => {
+        const {sendTime} = this.state
+        if (sendTime) {
 
+        } else {
+            Message({
+                showClose: true,
+                message: '请选择送达时间',
+                type: 'error'
+            });
+        }
     }
+
 
     // //删除菜单
     // deleteFood = (data) => {

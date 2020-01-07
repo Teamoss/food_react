@@ -14,7 +14,8 @@ class BusinessMessage extends Component {
                 logo: '',
                 name: '',
                 message: '',
-                address: ''
+                address: '',
+                swiper: ''
             },
         };
     }
@@ -33,6 +34,7 @@ class BusinessMessage extends Component {
                 form.name = userInfo.business
                 form.message = userInfo.content
                 form.address = userInfo.address
+                form.swiper = userInfo.swiper
             }
         }
     }
@@ -52,23 +54,28 @@ class BusinessMessage extends Component {
 
 
     render() {
+        const {form} = this.state
         return (
             <Layout.Row type="flex" justify="center">
                 <Layout.Col span="10">
-                    <Form ref="form" model={this.state.form} rules={this.state.rules} labelWidth="100"
+                    <Form ref="form" model={form} labelWidth="100"
                           className="demo-dynamic">
                         <Form.Item prop="name" label="商家名称 :">
-                            <Input value={this.state.form.name}/>
+                            <Input value={form.name}/>
                         </Form.Item>
                         <Form.Item prop="address" label="商家地址 :">
-                            <Input value={this.state.form.address}/>
+                            <Input value={form.address}/>
                         </Form.Item>
                         <Form.Item prop="message" label="商家介绍 :">
-                            <Input type="textarea" value={this.state.form.message}/>
+                            <Input type="textarea" value={form.message}/>
                         </Form.Item>
                         <Form.Item prop="logo" label="商家logo :">
-                            <img src={this.state.form.logo} width={100}
-                                 height={100} alt='商家Logo'/>
+                            <img src={form.logo} width={100}
+                                 height={80} alt='商家Logo'/>
+                        </Form.Item>
+                        <Form.Item prop="swiper" label="商家图片 :">
+                            <img src={form.swiper} width={100}
+                                 height={80} alt='商家Logo'/>
                         </Form.Item>
                         <Form.Item>
                             <Button type="primary" onClick={this.editMessage.bind(this)}>编辑信息</Button>

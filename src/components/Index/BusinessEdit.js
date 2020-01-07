@@ -22,7 +22,8 @@ class BusinessEdit extends Component {
                 detailAddress: '',
             },
             city: null,
-            imageUrl: null
+            imageUrl: null,
+            swiper:null
         };
     }
 
@@ -39,7 +40,8 @@ class BusinessEdit extends Component {
                 form.name = userInfo.business
                 form.message = userInfo.content
                 this.setState({
-                    imageUrl: userInfo.logo
+                    imageUrl: userInfo.logo,
+                    swiper: userInfo.swiper
                 })
             }
         }
@@ -66,6 +68,23 @@ class BusinessEdit extends Component {
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
             Message('上传头像图片大小不能超过 2MB!');
+        }
+        return isLt2M;
+    }
+
+
+    handleSwiperScucess(res, file) {
+        if (res.code === 2000) {
+            this.setState({
+                swiper: res.swiper
+            })
+        }
+    }
+
+    beforeSwiperUpload(file) {
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            Message('上传图片大小不能超过 2MB!');
         }
         return isLt2M;
     }
@@ -102,7 +121,7 @@ class BusinessEdit extends Component {
 
     //确定编辑
     editMessage = () => {
-        const {city, form, imageUrl} = this.state
+        const {city, form, imageUrl,swiper} = this.state
         let addressMess = city ? city + form.detailAddress : form.detailAddress
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let userID = data._id
@@ -110,7 +129,8 @@ class BusinessEdit extends Component {
             userID,
             addressMess,
             form,
-            imageUrl
+            imageUrl,
+            swiper
         }).then(res => {
             if (res.data.code === 2000) {
                 Message({
@@ -138,7 +158,7 @@ class BusinessEdit extends Component {
     }
 
     render() {
-        const {imageUrl} = this.state;
+        const {imageUrl,swiper} = this.state;
         return (
             <div style={{height: '100%', width: '100%'}}>
                 <Layout.Row>
@@ -177,7 +197,19 @@ class BusinessEdit extends Component {
                                     onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
                                     beforeUpload={file => this.beforeAvatarUpload(file)}
                                 >
-                                    {imageUrl ? <img src={imageUrl} className="avatar"/> :
+                                    {imageUrl ? <img src={imageUrl} className="avatar"  height={80}/> :
+                                        <i className="el-icon-plus avatar-uploader-icon"/>}
+                                </Upload>
+                            </Form.Item>
+                            <Form.Item label="商家图片 :">
+                                <Upload
+                                    className="avatar-uploader"
+                                    action="http://localhost:5000/api/uploadSwiper"
+                                    showFileList={false}
+                                    onSuccess={(res, file) => this.handleSwiperScucess(res, file)}
+                                    beforeUpload={file => this.beforeSwiperUpload(file)}
+                                >
+                                    {swiper ? <img src={swiper} className="avatar"  height={80}/> :
                                         <i className="el-icon-plus avatar-uploader-icon"/>}
                                 </Upload>
                             </Form.Item>

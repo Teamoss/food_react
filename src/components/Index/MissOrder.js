@@ -115,7 +115,7 @@ class MissOrder extends Component {
                 {
                     label: "配送地址",
                     prop: "address",
-                    width: 200,
+                    width: 230,
                     render: function (data) {
                         return <span>{data.address}</span>
                     }
@@ -167,7 +167,7 @@ class MissOrder extends Component {
             if (res.data.code === 2000) {
                 Message({
                     showClose: true,
-                    message: res.data.message,
+                    message: '接单成功，请尽快配送',
                     type: 'success'
                 });
                 this.loadingData()
@@ -217,14 +217,14 @@ class MissOrder extends Component {
 
     render() {
 
-        const {total, pageSize} = this.state
+        const {total, pageSize, data, columns} = this.state
 
         return (
             <div>
                 <Table
                     style={{width: '100%'}}
-                    columns={this.state.columns}
-                    data={this.state.data}
+                    columns={columns}
+                    data={data}
                     height={540}
                     border={true}
                     highlightCurrentRow={true}

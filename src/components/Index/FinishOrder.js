@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Layout, Table, Button, Pagination, Message, TimeSelect} from 'element-react';
+import {Layout, Table, Button, Pagination, Message} from 'element-react';
 import {connect} from "react-redux";
 import * as orderAction from "../../action/orderAction";
 import Connect from "../../service/address";
 import axios from "axios";
 
 
-class ReceivedOrder extends Component {
+class FinishOrder extends Component {
 
     constructor(props) {
 
@@ -23,7 +23,7 @@ class ReceivedOrder extends Component {
                     }
                 },
                 {
-                    label: "下单顾客",
+                    label: "订单顾客",
                     prop: "name",
                     width: 100,
                     render: function (data) {
@@ -40,25 +40,16 @@ class ReceivedOrder extends Component {
                 },
                 {
                     label: "送达时间",
-                    prop: "sendTime",
-                    width: 220,
-                    render: (data) => {
-                        return (
-                            <TimeSelect
-                                start={data.sendTime}
-                                step="00:10"
-                                end="23:59"
-                                onChange={(time) => this.handleUpdate(time, data._id)}
-                                value={data.finishTime}
-                                placeholder="选择时间"
-                            />
-                        )
+                    prop: "finishTime",
+                    width: 200,
+                    render: function (data) {
+                        return <span>{data.finishTime}</span>
                     }
                 },
                 {
                     label: "订单信息",
                     prop: "food",
-                    width: 400,
+                    width: 500,
                     render: (data) => {
                         return <div style={{}}>
                             {data.food.map((item, index) => {
@@ -124,28 +115,16 @@ class ReceivedOrder extends Component {
                 {
                     label: "配送地址",
                     prop: "address",
-                    width: 240,
+                    width: 260,
                     render: function (data) {
                         return <span>{data.address}</span>
                     }
                 },
-                {
-                    label: "是否送达",
-                    width: 100,
-                    render: (data) => {
-                        return (
-                            <span>
-             <Button type="primary" onClick={() => this.finishOrder(data)}>是</Button>
-            </span>
-                        )
-                    }
-                }
             ],
             data: [],
             total: null,
             pageSize: 8,
-            pageNo: 1,
-            timeValue: null,
+            pageNo: 1
         }
     }
 
@@ -159,7 +138,6 @@ class ReceivedOrder extends Component {
             let orderData = nextProps.orderData
             orderData.data.forEach(item => {
                 item['food'] = JSON.parse(item.food)
-                item['finishTime'] = null
             })
             this.setState({
                 data: orderData.data,
@@ -169,77 +147,17 @@ class ReceivedOrder extends Component {
     }
 
 
-    handleUpdate = (time, id) => {
-        const {data} = this.state
-
-        let arr = time.toString().split(/\s+/)
-        let _time = arr[4]
-        let myDate = new Date();
-        let year = myDate.getFullYear();
-        let month = myDate.getMonth() + 1;
-        let date = myDate.getDate();
-        let sendTime = `${year}-${month < 10 ? '0' + month : month}-${date < 10 ? '0' + date : date} ${_time}`
-        let detailTime = _time.toString().split(':')
-        let house = detailTime[0]
-        let minute = detailTime[1]
-        data.forEach((item, index) => {
-            if (item._id == id) {
-                item['finishTime'] = new Date(year, month, date, house, minute)
-                item['formFinishTime'] = sendTime
-            }
-        })
-
-    }
-
     loadingData = () => {
         const {findAllBusinessOrder} = this.props
         const {pageSize, pageNo} = this.state
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let business = data._id
         findAllBusinessOrder({
-            type: 1,
+            type: 2,
             business,
             pageSize,
             pageNo
         })
-    }
-
-
-    //送达订单
-    finishOrder = (data) => {
-
-        const {formFinishTime, _id} = data
-        if (formFinishTime) {
-            axios.post(Connect.changeOrder, {
-                id: _id,
-                type: 2,
-                finishTime: formFinishTime
-            }).then(res => {
-                if (res.data.code === 2000) {
-                    Message({
-                        showClose: true,
-                        message: '订单完成',
-                        type: 'success'
-                    });
-                    this.loadingData()
-                }
-                if (res.data.code === 2001) {
-                    Message({
-                        showClose: true,
-                        message: res.data.message,
-                        type: 'error'
-                    });
-                }
-            }).catch(err => {
-                console.log(err)
-            })
-        } else {
-            Message({
-                showClose: true,
-                message: '请选择送达时间',
-                type: 'error'
-            });
-        }
     }
 
 
@@ -253,7 +171,7 @@ class ReceivedOrder extends Component {
             pageNo: currentPage
         })
         findAllBusinessOrder({
-            type: 1,
+            type: 0,
             business,
             pageSize,
             pageNo: currentPage
@@ -261,6 +179,7 @@ class ReceivedOrder extends Component {
     }
 
     render() {
+
         const {total, pageSize, data, columns} = this.state
 
         return (
@@ -299,4 +218,4 @@ export default connect(
     (dispatch) => ({
         findAllBusinessOrder: (params) => dispatch(orderAction.findAllBusinessOrder(params)),
     })
-)(ReceivedOrder)
+)(FinishOrder)

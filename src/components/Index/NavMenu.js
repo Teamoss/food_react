@@ -9,6 +9,8 @@ import AddFood from './AddFood'
 import EditFood from './EditFood'
 import MissOrder from './MissOrder'
 import ReceivedOrder from './ReceivedOrder'
+import FinishOrder from './FinishOrder'
+
 
 
 class NavMenu extends Component {
@@ -86,6 +88,7 @@ class NavMenu extends Component {
                     <Route exact path='/Index/EditFood' component={EditFood}/>
                     <Route exact path='/Index/MissOrder' component={MissOrder}/>
                     <Route exact path='/Index/ReceivedOrder' component={ReceivedOrder}/>
+                    <Route exact path='/Index/FinishOrder' component={FinishOrder}/>
                 </Switch>
             </div>
         )

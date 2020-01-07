@@ -23,7 +23,7 @@ class BusinessEdit extends Component {
             },
             city: null,
             imageUrl: null,
-            swiper:null
+            swiper: null
         };
     }
 
@@ -39,6 +39,7 @@ class BusinessEdit extends Component {
                 let userInfo = data.userInfo
                 form.name = userInfo.business
                 form.message = userInfo.content
+                form.phone = userInfo.phone
                 this.setState({
                     imageUrl: userInfo.logo,
                     swiper: userInfo.swiper
@@ -121,8 +122,16 @@ class BusinessEdit extends Component {
 
     //确定编辑
     editMessage = () => {
-        const {city, form, imageUrl,swiper} = this.state
-        let addressMess = city ? city + form.detailAddress : form.detailAddress
+        const {city, form, imageUrl, swiper} = this.state
+        if (!city || !form ) {
+            Message({
+                showClose: true,
+                message: '请填写完整信息',
+                type: 'error'
+            });
+            return
+        }
+        let addressMess = city + form.detailAddress
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let userID = data._id
         axios.post(Connect.editBusinessMessage, {
@@ -158,7 +167,7 @@ class BusinessEdit extends Component {
     }
 
     render() {
-        const {imageUrl,swiper} = this.state;
+        const {imageUrl, swiper} = this.state;
         return (
             <div style={{height: '100%', width: '100%'}}>
                 <Layout.Row>
@@ -172,24 +181,28 @@ class BusinessEdit extends Component {
                 <Layout.Row type="flex" justify="center">
                     <Layout.Col span="10">
                         <Form model={this.state.form} labelWidth="80" onSubmit={this.onSubmit.bind(this)}>
-                            <Form.Item label="商家名称 : ">
+                            <Form.Item label="名称 : ">
                                 <Input value={this.state.form.name}
                                        onChange={this.onChange.bind(this, 'name')}/>
                             </Form.Item>
-                            <Form.Item label="商家介绍 :">
+                            <Form.Item label="介绍 :">
                                 <Input type="textarea" value={this.state.form.message}
                                        onChange={this.onChange.bind(this, 'message')}/>
                             </Form.Item>
-                            <Form.Item label="商家地区 :">
-                                <DistPicker
-                                    onSelect={this._onSelect}
-                                />
+                            <Form.Item label="联系方式 : ">
+                                <Input value={this.state.form.phone}
+                                       onChange={this.onChange.bind(this, 'phone')}/>
                             </Form.Item>
                             <Form.Item label="详细地址 :">
                                 <Input value={this.state.form.detailAddress}
                                        onChange={this.onChange.bind(this, 'detailAddress')}/>
                             </Form.Item>
-                            <Form.Item label="商家Logo :">
+                            <Form.Item label="地区 :">
+                                <DistPicker
+                                    onSelect={this._onSelect}
+                                />
+                            </Form.Item>
+                            <Form.Item label="Logo :">
                                 <Upload
                                     className="avatar-uploader"
                                     action="http://localhost:5000/api/uploadLogo"
@@ -197,11 +210,11 @@ class BusinessEdit extends Component {
                                     onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
                                     beforeUpload={file => this.beforeAvatarUpload(file)}
                                 >
-                                    {imageUrl ? <img src={imageUrl} className="avatar"  height={80}/> :
+                                    {imageUrl ? <img src={imageUrl} className="avatar" height={80}/> :
                                         <i className="el-icon-plus avatar-uploader-icon"/>}
                                 </Upload>
                             </Form.Item>
-                            <Form.Item label="商家图片 :">
+                            <Form.Item label="描述图片 :">
                                 <Upload
                                     className="avatar-uploader"
                                     action="http://localhost:5000/api/uploadSwiper"
@@ -209,13 +222,13 @@ class BusinessEdit extends Component {
                                     onSuccess={(res, file) => this.handleSwiperScucess(res, file)}
                                     beforeUpload={file => this.beforeSwiperUpload(file)}
                                 >
-                                    {swiper ? <img src={swiper} className="avatar"  height={80}/> :
+                                    {swiper ? <img src={swiper} className="avatar" height={80}/> :
                                         <i className="el-icon-plus avatar-uploader-icon"/>}
                                 </Upload>
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" nativeType="submit" onClick={this.editMessage}>确定</Button>
-                                <Button  nativeType="submit" onClick={this.cancel}>取消</Button>
+                                <Button nativeType="submit" onClick={this.cancel}>取消</Button>
                             </Form.Item>
 
                         </Form>

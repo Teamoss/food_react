@@ -35,6 +35,7 @@ class BusinessMessage extends Component {
                 form.message = userInfo.content
                 form.address = userInfo.address
                 form.swiper = userInfo.swiper
+                form.phone = userInfo.phone
             }
         }
     }
@@ -60,20 +61,23 @@ class BusinessMessage extends Component {
                 <Layout.Col span="10">
                     <Form ref="form" model={form} labelWidth="100"
                           className="demo-dynamic">
-                        <Form.Item prop="name" label="商家名称 :">
+                        <Form.Item prop="name" label="名称 :">
                             <Input value={form.name}/>
                         </Form.Item>
-                        <Form.Item prop="address" label="商家地址 :">
+                        <Form.Item prop="address" label="地址 :">
                             <Input value={form.address}/>
                         </Form.Item>
-                        <Form.Item prop="message" label="商家介绍 :">
+                        <Form.Item prop="phone" label="联系方式 :">
+                            <Input value={form.phone}/>
+                        </Form.Item>
+                        <Form.Item prop="message" label="介绍 :">
                             <Input type="textarea" value={form.message}/>
                         </Form.Item>
-                        <Form.Item prop="logo" label="商家logo :">
+                        <Form.Item prop="logo" label="logo :">
                             <img src={form.logo} width={100}
                                  height={80} alt='商家Logo'/>
                         </Form.Item>
-                        <Form.Item prop="swiper" label="商家图片 :">
+                        <Form.Item prop="swiper" label="描述图片 :">
                             <img src={form.swiper} width={100}
                                  height={80} alt='商家Logo'/>
                         </Form.Item>

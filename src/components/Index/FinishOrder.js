@@ -136,9 +136,6 @@ class FinishOrder extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.orderData && nextProps.orderData.code === 2000) {
             let orderData = nextProps.orderData
-            orderData.data.forEach(item => {
-                item['food'] = JSON.parse(item.food)
-            })
             this.setState({
                 data: orderData.data,
                 total: orderData.total

@@ -12,6 +12,8 @@ let Connect = {
     editBusinessMessage: host + '/api/editBusinessMessage',
     //上传商家logo图片
     uploadLogo: host + '/api/uploadLogo',
+    //上传商家描述图片
+    uploadSwiper: host + '/api/uploadSwiper',
     //添加菜单
     addFood: host + '/api/addFood',
     //查询所有菜单
@@ -24,6 +26,8 @@ let Connect = {
     findAllBusinessOrder: host + '/api/findAllBusinessOrder',
     //订单状态改变
     changeOrder: host + '/api/changeOrder',
+    //查看商家评论
+    findAllComment: host + '/api/findAllComment',
 }
 
 module.exports = Connect

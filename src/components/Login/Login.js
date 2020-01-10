@@ -17,7 +17,13 @@ class Login extends Component {
         };
     }
 
+    componentDidMount() {
+        // location.reload()
+    }
+
     componentWillReceiveProps(nextProps) {
+
+        const {history} = this.props
         if (nextProps && nextProps.loginData) {
             let data = nextProps.loginData
             if (data.code === 2000) {
@@ -27,8 +33,8 @@ class Login extends Component {
                     type: 'success'
                 });
                 let userInfo = JSON.stringify(data.userInfo)
-                sessionStorage.setItem('userInfo',userInfo)
-                this.props.history.push('/Index')
+                sessionStorage.setItem('userInfo', userInfo)
+                history.push('/Index')
             }
             if (data.code === 2001) {
                 Message({

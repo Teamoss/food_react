@@ -39,7 +39,7 @@ class MissOrder extends Component {
                     }
                 },
                 {
-                    label: "预计送达时间",
+                    label: "期望送达时间",
                     prop: "sendTime",
                     width: 130,
                     render: function (data) {
@@ -147,9 +147,6 @@ class MissOrder extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.orderData && nextProps.orderData.code === 2000) {
             let orderData = nextProps.orderData
-            orderData.data.forEach(item => {
-                item['food'] = JSON.parse(item.food)
-            })
             this.setState({
                 data: orderData.data,
                 total: orderData.total
@@ -185,7 +182,7 @@ class MissOrder extends Component {
     }
 
     loadingData = () => {
-        const {findAllBusinessOrder} = this.props
+        const {findAllBusinessOrder, loginData} = this.props
         const {pageSize, pageNo} = this.state
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let business = data._id
@@ -251,6 +248,8 @@ export default connect(
     (state) => ({
         orderData: state.orderReducer.orderData,
         orderError: state.orderReducer.orderError,
+        loginData: state.loginReducer.loginData,
+        loginError: state.loginReducer.loginError,
     }),
     (dispatch) => ({
         findAllBusinessOrder: (params) => dispatch(orderAction.findAllBusinessOrder(params)),

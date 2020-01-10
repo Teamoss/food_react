@@ -10,14 +10,14 @@ import EditFood from './EditFood'
 import MissOrder from './MissOrder'
 import ReceivedOrder from './ReceivedOrder'
 import FinishOrder from './FinishOrder'
-
+import Comment from './Comment'
 
 
 class NavMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username:null
+            username: null
         };
     }
 
@@ -46,7 +46,10 @@ class NavMenu extends Component {
             this.props.history.push('/Index/AddFood')
         }
         if (index == 5) { //退出登录
-            this.props.history.push("/Login");
+            this.props.history.push("/");
+        }
+        if (index == 6) {
+            this.props.history.push('/Index/comment')
         }
     }
 
@@ -70,6 +73,7 @@ class NavMenu extends Component {
                             <Link to='/Index/business'>
                                 <Menu.Item index="3">商家信息</Menu.Item>
                             </Link>
+                            <Menu.Item index="6">顾客评论</Menu.Item>
                         </Layout.Col>
                         <Layout.Col span="3">
                             <Menu.Item index="4">欢迎用户：{username}</Menu.Item>
@@ -89,6 +93,7 @@ class NavMenu extends Component {
                     <Route exact path='/Index/MissOrder' component={MissOrder}/>
                     <Route exact path='/Index/ReceivedOrder' component={ReceivedOrder}/>
                     <Route exact path='/Index/FinishOrder' component={FinishOrder}/>
+                    <Route exact path='/Index/comment' component={Comment}/>
                 </Switch>
             </div>
         )

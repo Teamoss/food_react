@@ -15,9 +15,9 @@ class App extends Component {
             <HashRouter>
                 <div className="App">
                     <header className="App-header">
-                        <Route exact path='/' component={Login}/>
-                        <Route path='/Login' component={Login}/>
-                        <Route path='/Register' component={Register}/>
+                        <Route exact path='/' component={Login} history={history}/>
+                        <Route path='/Login' component={Login} history={history}/>
+                        <Route path='/Register' component={Register} history={history}/>
                         <Route path='/Index' component={Index} history={history}/>
                     </header>
                 </div>

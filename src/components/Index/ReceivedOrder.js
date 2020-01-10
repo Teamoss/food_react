@@ -158,7 +158,6 @@ class ReceivedOrder extends Component {
         if (nextProps.orderData && nextProps.orderData.code === 2000) {
             let orderData = nextProps.orderData
             orderData.data.forEach(item => {
-                item['food'] = JSON.parse(item.food)
                 item['finishTime'] = null
             })
             this.setState({

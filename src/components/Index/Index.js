@@ -9,17 +9,6 @@ class Index extends Component {
         super(props);
     }
 
-    componentDidMount() {
-        // this.isLoading()
-    }
-
-
-    isLoading = () => {
-        const {loginData} = this.props
-        if (!loginData || loginData.code !== 2000) {
-            this.props.history.push('/Login')
-        }
-    }
 
     render() {
         const {history} = this.props

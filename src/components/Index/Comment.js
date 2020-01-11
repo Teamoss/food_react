@@ -147,7 +147,7 @@ class Comment extends Component {
     comment = (data) => {
 
         let id = data._id
-        MessageBox.prompt('请输入回复').then(({value}) => {
+        MessageBox.prompt('请输入回复内容').then(({value}) => {
             if (value) {
                 axios.post(Connect.businessComment, {
                     id,

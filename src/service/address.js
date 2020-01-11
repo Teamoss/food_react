@@ -26,8 +26,10 @@ let Connect = {
     findAllBusinessOrder: host + '/api/findAllBusinessOrder',
     //订单状态改变
     changeOrder: host + '/api/changeOrder',
-    //查看商家评论
+    //查看顾客评论
     findAllComment: host + '/api/findAllComment',
+    //商家回复
+    businessComment:host + '/api/businessComment',
 }
 
 module.exports = Connect

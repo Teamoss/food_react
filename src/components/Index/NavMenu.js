@@ -17,7 +17,8 @@ class NavMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: null
+            username: null,
+            activeIndex:1
         };
     }
 
@@ -30,34 +31,53 @@ class NavMenu extends Component {
     }
 
     onSelect = (index) => {
+
         if (index == '1-1') {
             this.props.history.push('/Index/MissOrder')
+            this.setState({
+                activeIndex:1
+            })
         }
         if (index == '1-2') {
             this.props.history.push('/Index/ReceivedOrder')
+            this.setState({
+                activeIndex:1
+            })
         }
         if (index == '1-3') {
             this.props.history.push('/Index/FinishOrder')
+            this.setState({
+                activeIndex:1
+            })
         }
         if (index == '2-1') {
             this.props.history.push('/Index/FoodMenu')
+            this.setState({
+                activeIndex:2
+            })
         }
         if (index == '2-2') {
             this.props.history.push('/Index/AddFood')
+            this.setState({
+                activeIndex:2
+            })
+        }
+
+        if (index == 3) {
+            this.setState({
+                activeIndex:3
+            })
         }
         if (index == 5) { //退出登录
             this.props.history.push("/");
         }
-        if (index == 6) {
-            this.props.history.push('/Index/comment')
-        }
     }
 
     render() {
-        const {username} = this.state
+        const {username,activeIndex} = this.state
         return (
             <div style={{height: '100%', width: '100%', justifyContent: 'center', alignItems: 'center'}}>
-                <Menu theme="dark" defaultActive="1" className="el-menu-demo" mode="horizontal"
+                <Menu theme="dark" defaultActive={activeIndex} className="el-menu-demo" mode="horizontal"
                       onSelect={this.onSelect.bind(this)}>
                     <Layout.Row>
                         <Layout.Col span="19">
@@ -73,7 +93,9 @@ class NavMenu extends Component {
                             <Link to='/Index/business'>
                                 <Menu.Item index="3">商家信息</Menu.Item>
                             </Link>
-                            <Menu.Item index="6">顾客评论</Menu.Item>
+                            <Link to='/Index/comment'>
+                                <Menu.Item index="6">顾客评论</Menu.Item>
+                            </Link>
                         </Layout.Col>
                         <Layout.Col span="3">
                             <Menu.Item index="4">欢迎用户：{username}</Menu.Item>

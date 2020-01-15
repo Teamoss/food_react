@@ -16,7 +16,7 @@ class ReceivedOrder extends Component {
             columns: [
                 {
                     label: "序号",
-                    width: 60,
+                    width: 80,
                     render: (row, column, index) => {
                         const {pageNo, pageSize} = this.state
                         return <span>{(pageNo - 1) * pageSize + index + 1}</span>
@@ -58,7 +58,7 @@ class ReceivedOrder extends Component {
                 {
                     label: "订单信息",
                     prop: "food",
-                    width: 400,
+                    width: 380,
                     render: (data) => {
                         return <div style={{}}>
                             {data.food.map((item, index) => {

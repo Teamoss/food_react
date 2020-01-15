@@ -62,7 +62,7 @@ class Comment extends Component {
                     width: 400,
                     render: (data) => {
                         return <div style={{}}>
-                            {data.order.food.map((item, index) => {
+                            {data && data.order && data.order.food.map((item, index) => {
                                 return (
                                     <div style={{
                                         display: 'flex',

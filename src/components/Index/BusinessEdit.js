@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import 'element-theme-default';
-import {Button, Form, Upload, Input, Message, Layout, Tabs} from 'element-react';
+import {Button, Form, Upload, Input, Message, Layout, Tabs, Cascader} from 'element-react';
 import 'element-theme-default';
 import DistPicker from 'react-distpicker';
 import {connect} from "react-redux";
 import * as businessMessageAction from "../../action/businessMessageAction";
 import Connect from "../../service/address";
 import axios from "axios";
-
+import cityData from '../../utils/cityData'
 
 class BusinessEdit extends Component {
 
@@ -19,11 +19,12 @@ class BusinessEdit extends Component {
                 name: '',
                 message: '',
                 address: '',
-                detailAddress: '',
+                phone:''
             },
-            city: null,
             imageUrl: null,
-            swiper: null
+            swiper: null,
+            options: cityData,
+            selectedOptions2: [],
         };
     }
 
@@ -39,14 +40,17 @@ class BusinessEdit extends Component {
                 let userInfo = data.userInfo
                 form.name = userInfo.business
                 form.message = userInfo.content
+                form.address = userInfo.address
                 form.phone = userInfo.phone
                 this.setState({
                     imageUrl: userInfo.logo,
-                    swiper: userInfo.swiper
+                    swiper: userInfo.swiper,
+                    selectedOptions2:userInfo.city
                 })
             }
         }
     }
+
 
     loadMessage = () => {
         const {getBusinessMessage} = this.props
@@ -110,20 +114,11 @@ class BusinessEdit extends Component {
     }
 
 
-    //地区选择
-    _onSelect = (data) => {
-        if (data.district) {
-            let address = data.province + data.district + data.city
-            this.setState({
-                city: address
-            })
-        }
-    }
-
     //确定编辑
     editMessage = () => {
-        const {city, form, imageUrl, swiper} = this.state
-        if (!city || !form ) {
+        const {form, imageUrl, swiper, selectedOptions2} = this.state
+
+        if ( !form.name || !form.message ||!form.address ||!form.phone ) {
             Message({
                 showClose: true,
                 message: '请填写完整信息',
@@ -131,15 +126,14 @@ class BusinessEdit extends Component {
             });
             return
         }
-        let addressMess = city + form.detailAddress
         let data = JSON.parse(sessionStorage.getItem('userInfo'));
         let userID = data._id
         axios.post(Connect.editBusinessMessage, {
             userID,
-            addressMess,
             form,
             imageUrl,
-            swiper
+            swiper,
+            city: selectedOptions2
         }).then(res => {
             if (res.data.code === 2000) {
                 Message({
@@ -166,6 +160,14 @@ class BusinessEdit extends Component {
         this.props.history.push('/Index/business')
     }
 
+    //地区选择
+    handleChange(key, value) {
+        this.setState({
+            [key]: value
+        })
+    }
+
+
     render() {
         const {imageUrl, swiper} = this.state;
         return (
@@ -181,51 +183,72 @@ class BusinessEdit extends Component {
                 <Layout.Row type="flex" justify="center">
                     <Layout.Col span="10">
                         <Form model={this.state.form} labelWidth="80" onSubmit={this.onSubmit.bind(this)}>
-                            <Form.Item label="名称 : ">
-                                <Input value={this.state.form.name}
-                                       onChange={this.onChange.bind(this, 'name')}/>
-                            </Form.Item>
+                            <Layout.Row>
+                                <Layout.Col span="12">
+                                    <Form.Item label="名称 : ">
+                                        <Input value={this.state.form.name}
+                                               onChange={this.onChange.bind(this, 'name')}/>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item label="联系方式 : ">
+                                        <Input value={this.state.form.phone}
+                                               onChange={this.onChange.bind(this, 'phone')}/>
+                                    </Form.Item>
+                                </Layout.Col>
+                            </Layout.Row>
+
                             <Form.Item label="介绍 :">
                                 <Input type="textarea" value={this.state.form.message}
                                        onChange={this.onChange.bind(this, 'message')}/>
                             </Form.Item>
-                            <Form.Item label="联系方式 : ">
-                                <Input value={this.state.form.phone}
-                                       onChange={this.onChange.bind(this, 'phone')}/>
-                            </Form.Item>
-                            <Form.Item label="详细地址 :">
-                                <Input value={this.state.form.detailAddress}
-                                       onChange={this.onChange.bind(this, 'detailAddress')}/>
-                            </Form.Item>
+
                             <Form.Item label="地区 :">
-                                <DistPicker
-                                    onSelect={this._onSelect}
-                                />
+                                <Layout.Col span="12">
+                                    <Cascader
+                                        options={this.state.options}
+                                        expandTrigger="hover"
+                                        value={this.state.selectedOptions2}
+                                        onChange={this.handleChange.bind(this, 'selectedOptions2')}/>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item label="详细地址 :">
+                                        <Input value={this.state.form.address}
+                                               onChange={this.onChange.bind(this, 'address')}/>
+                                    </Form.Item>
+                                </Layout.Col>
                             </Form.Item>
-                            <Form.Item label="Logo :">
-                                <Upload
-                                    className="avatar-uploader"
-                                    action="http://localhost:5000/api/uploadLogo"
-                                    showFileList={false}
-                                    onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
-                                    beforeUpload={file => this.beforeAvatarUpload(file)}
-                                >
-                                    {imageUrl ? <img src={imageUrl} className="avatar" height={80}/> :
-                                        <i className="el-icon-plus avatar-uploader-icon"/>}
-                                </Upload>
-                            </Form.Item>
-                            <Form.Item label="描述图片 :">
-                                <Upload
-                                    className="avatar-uploader"
-                                    action="http://localhost:5000/api/uploadSwiper"
-                                    showFileList={false}
-                                    onSuccess={(res, file) => this.handleSwiperScucess(res, file)}
-                                    beforeUpload={file => this.beforeSwiperUpload(file)}
-                                >
-                                    {swiper ? <img src={swiper} className="avatar" height={80}/> :
-                                        <i className="el-icon-plus avatar-uploader-icon"/>}
-                                </Upload>
-                            </Form.Item>
+                            <Layout.Row>
+                                <Layout.Col span="12">
+                                    <Form.Item label="Logo :">
+                                        <Upload
+                                            className="avatar-uploader"
+                                            action="http://localhost:5000/api/uploadLogo"
+                                            showFileList={false}
+                                            onSuccess={(res, file) => this.handleAvatarScucess(res, file)}
+                                            beforeUpload={file => this.beforeAvatarUpload(file)}
+                                        >
+                                            {imageUrl ? <img src={imageUrl} className="avatar" height={80}/> :
+                                                <i className="el-icon-plus avatar-uploader-icon"/>}
+                                        </Upload>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item label="描述图片 :">
+                                        <Upload
+                                            className="avatar-uploader"
+                                            action="http://localhost:5000/api/uploadSwiper"
+                                            showFileList={false}
+                                            onSuccess={(res, file) => this.handleSwiperScucess(res, file)}
+                                            beforeUpload={file => this.beforeSwiperUpload(file)}
+                                        >
+                                            {swiper ? <img src={swiper} className="avatar" height={80}/> :
+                                                <i className="el-icon-plus avatar-uploader-icon"/>}
+                                        </Upload>
+                                    </Form.Item>
+                                </Layout.Col>
+                            </Layout.Row>
+
                             <Form.Item>
                                 <Button type="primary" nativeType="submit" onClick={this.editMessage}>确定</Button>
                                 <Button nativeType="submit" onClick={this.cancel}>取消</Button>

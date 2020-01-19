@@ -151,7 +151,7 @@ class Comment extends Component {
             if (value) {
                 axios.post(Connect.businessComment, {
                     id,
-                    comment: 123
+                    comment: value
                 }).then(res => {
                     if (res.data.code === 2000) {
                         Message({

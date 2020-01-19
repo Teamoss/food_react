@@ -1,7 +1,9 @@
 //主机地址
-let host = 'http://localhost:5000'
+const host = 'http://localhost:5000'
+// const host = 'http://192.168.1.167:5000'
 
 let Connect = {
+    host,
     //登录
     login: host + '/api/login',
     //注册

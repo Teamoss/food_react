@@ -18,8 +18,12 @@ class AddFood extends Component {
                 description: null,
                 price: null
             },
-            imageUrl: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg'
+            imageUrl:Connect.host+ '/public/default/food.jpeg'
         };
+    }
+
+    componentDidMount() {
+
     }
 
 

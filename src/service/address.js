@@ -32,6 +32,14 @@ let Connect = {
     findAllComment: host + '/api/findAllComment',
     //商家回复
     businessComment:host + '/api/businessComment',
+    //管理员登录
+    adminLogin: host + '/api/adminLogin',
+    //管理员注册
+    adminRegister: host + '/api/adminRegister',
+    //管理員管理商家
+    adminBusiness:host + '/api/adminBusiness',
+    //删除商家
+    deleteBusiness:host + '/api/deleteBusiness',
 }
 
 module.exports = Connect

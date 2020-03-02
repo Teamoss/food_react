@@ -4,6 +4,9 @@ import businessMessageReducer from './businessMessageReducer';
 import foodReducer from './foodReducer';
 import orderReducer from './orderReducer';
 import commentReducer from './commentReducer';
+import adminLoginReducer from './adminLoginReducer';
+import adminBusinessReducer from './adminBusinessReducer';
+
 
 export const allReducers = combineReducers({
     loginReducer,
@@ -11,6 +14,8 @@ export const allReducers = combineReducers({
     foodReducer,
     orderReducer,
     commentReducer,
+    adminLoginReducer,
+    adminBusinessReducer
 })
 
 
